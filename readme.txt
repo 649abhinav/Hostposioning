@@ -1,6 +1,6 @@
-1. Change regions list according to your server.
-2. Create a file with all testing url page with name urllist.txt
-3. Some site use request limit use tor proxy on port 9050 for such constrains
+Usage:
+This tool can be use in multiple way to bypass host, forwarded-for, cors and other headers like referrer to bypass the client side check. which is blocked by waf validation or parser validation 
 
+Provide target domain and attacker domain with tool
 
-//This can be use for page like where cache poisoning with header cache-control header showed up in response
+python3 specialchar.py exmaple.com attacker.com
